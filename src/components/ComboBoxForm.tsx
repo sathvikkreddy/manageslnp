@@ -60,9 +60,6 @@ export function ComboboxForm({
 
   function onFormSubmit(data: any) {
     onSubmit(data);
-    toast({
-      title: `Selected ${JSON.stringify(data)}`,
-    });
   }
 
   return (

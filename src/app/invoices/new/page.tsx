@@ -19,6 +19,7 @@ const newInvoicePage = () => {
   const [gstin, setGSTIN] = useState<string>("");
   const [companyDetails, setCompanyDetails] = useState<any | null>(null);
   const [ewayBill, setEwayBill] = useState<string>("");
+  const [po, setPo] = useState<string>("");
   const [packages, setPackages] = useState<Package[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [vehicleNo, setVehicleNo] = useState<string>("");
@@ -40,6 +41,18 @@ const newInvoicePage = () => {
     setPackages((pkgs) => [...pkgs, newPackage]);
   };
 
+  const handleGenerateInvoice = () => {
+    console.log({
+      invoiceData: {
+        companyId: companyId,
+        ewayBill: ewayBill,
+        packages: packages,
+        vehicleNo: vehicleNo,
+        po: po,
+      },
+    });
+  };
+
   useEffect(() => {
     if (companyId) {
       getCompanyDetails(companyId).then((companyDetails) => {
@@ -59,13 +72,9 @@ const newInvoicePage = () => {
 
   return (
     <div className="p-4">
-      <div className="grid lg:grid-cols-6 gap-4 items-center justify-items-center">
-        <CardHeader className="text-nowrap m-0 p-0">
-          Invoice: ffmg/2024-25/69
-        </CardHeader>
-        <CardHeader className="text-nowrap m-0 p-0">
-          Date: 14-06-2024
-        </CardHeader>
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 items-center justify-stretch md:justify-items-center">
+        <CardHeader className="text-nowrap">ffmg/2024-25/69</CardHeader>
+        <CardHeader className="text-nowrap">14-06-2024</CardHeader>
         <div className="col-span-2">
           <ComboboxForm
             classname=""
@@ -76,11 +85,12 @@ const newInvoicePage = () => {
             onSubmit={(data: any) => setCompanyId(data.id)}
           />
         </div>
-        <CardHeader className="text-nowrap m-0 p-0">
-          GSTIN: {companyDetails && companyDetails.GSTIN}
+
+        <CardHeader className="text-nowrap">
+          {companyDetails && companyDetails.GSTIN}
         </CardHeader>
-        <CardHeader className="text-nowrap m-0 p-0">
-          TOP: {companyDetails && "60 Days"}
+        <CardHeader className="text-nowrap">
+          {companyDetails && "60 Days"}
         </CardHeader>
       </div>
       {progress > 1 && (
@@ -90,29 +100,23 @@ const newInvoicePage = () => {
             className="m-2 md:m-8 grid grid-cols-1 md:grid-cols-2 gap-4 items-center md:justify-items-center"
           >
             <Card className="p-2 md:p-4">
-              <CardHeader className="text-nowrap m-0 p-0">Bill to:</CardHeader>
+              <CardHeader className="text-nowrap m-0 p-0 text-lg font-semibold">
+                Bill to:
+              </CardHeader>
+              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
               <div>
-                Address 1: {companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}
-              </div>
-              <div>
-                Address 2:{" "}
+                {" "}
                 {companyDetails && "ijihefuwcwfcdfscdecrfdb8gw9q8ih98kbsz"}
               </div>
-              <div>
-                Address 3: {companyDetails && "ijihefuwdb8gw9qvsdv8ih98kbsz"}
-              </div>
+              <div>{companyDetails && "ijihefuwdb8gw9qvsdv8ih98kbsz"}</div>
             </Card>
             <Card className="p-2 md:p-4">
-              <CardHeader className="text-nowrap m-0 p-0">Ship to:</CardHeader>
-              <div>
-                Address 1: {companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}
-              </div>
-              <div>
-                Address 2: {companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}
-              </div>
-              <div>
-                Address 3: {companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}
-              </div>
+              <CardHeader className="text-nowrap m-0 p-0 text-lg font-semibold">
+                Ship to:
+              </CardHeader>
+              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
+              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
+              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
             </Card>
           </div>
           <CardTitle className="m-2 md:m-4">Items:</CardTitle>
@@ -134,54 +138,76 @@ const newInvoicePage = () => {
           </Button>
         </div>
       )}
-      <Card className="flex text-nowrap items-center justify-around gap-4 m-2 md:m-4 p-2">
-        <div>
-          Total Quantity:{" "}
+      <Card className="flex flex-col md:flex-row text-nowrap items-center justify-around gap-4 m-2 md:m-4 p-2">
+        <div className="flex text-nowrap gap-2 items-center">
+          <div className="text-lg font-semibold"> Total Quantity:</div>
           {packages.reduce((acc, pkg) => {
             return acc + pkg.getQuantity();
           }, 0)}
         </div>
-        <div>
-          Total Amount:{" "}
+        <div className="flex text-nowrap gap-2 items-center">
+          <div className="text-lg font-semibold">Taxable Amount:</div>
           {packages.reduce((acc, pkg) => {
             return acc + pkg.getAmount();
           }, 0)}
         </div>
-        <div>
-          {`GST (${companyId.slice(0, 2) === "36" ? "9% + 9%" : "18%"}): ${
-            packages.reduce((acc, pkg) => {
-              return acc + pkg.getAmount();
-            }, 0) *
-            (18 / 100)
-          } `}
+        <div className="flex text-nowrap gap-2 items-center">
+          <div className="text-lg font-semibold">{`GST (${
+            companyId.slice(0, 2) === "36" ? "9% + 9%" : "18%"
+          }): `}</div>
+          {packages.reduce((acc, pkg) => {
+            return acc + pkg.getAmount();
+          }, 0) *
+            (18 / 100)}
+        </div>
+        <div className="flex text-nowrap gap-2 items-center">
+          <div className="text-lg font-semibold">Total Amount:</div>
+          {packages.reduce((acc, pkg) => {
+            return acc + pkg.getAmount() + (pkg.getAmount() * 18) / 100;
+          }, 0)}
+        </div>
+      </Card>
+
+      <div className="flex md:flex-row flex-col gap-4 justify-center ">
+        <div className="flex text-nowrap items-center gap-2">
+          <div className="text-lg font-semibold">Vehicle: </div>
+          <Input
+            placeholder="TS34T8398"
+            onChange={(e) => {
+              setVehicleNo(e.target.value);
+            }}
+          />{" "}
+        </div>
+        <div className="flex text-nowrap items-center gap-2">
+          <div className="text-lg font-semibold">PO & Date: </div>
+          <Input
+            placeholder="PO Number"
+            onChange={(e) => {
+              setVehicleNo(e.target.value);
+            }}
+          />{" "}
         </div>
         {packages.reduce((acc, pkg) => {
           return acc + pkg.getAmount();
         }, 0) > 50000 && (
-          <Input
-            placeholder="Eway Bill"
-            value={ewayBill}
-            onChange={(e) => {
-              setEwayBill(e.target.value);
-            }}
-          />
+          <div className="flex text-nowrap items-center gap-2">
+            <div className="text-lg font-semibold">Ewaybill: </div>
+            <Input
+              placeholder="Way Bill Number"
+              onChange={(e) => {
+                setVehicleNo(e.target.value);
+              }}
+            />{" "}
+          </div>
         )}
-        <Input
-          placeholder="TS35T4398"
-          value={vehicleNo}
-          onChange={(e) => {
-            setVehicleNo(e.target.value);
-          }}
-        />
-      </Card>
-
-      {packages.reduce((acc, pkg) => {
-        return acc + pkg.getAmount();
-      }, 0) > 0 && (
-        <div className="flex justify-center">
-          <Button>Generate Invoice</Button>
-        </div>
-      )}
+        {packages.reduce((acc, pkg) => {
+          return acc + pkg.getAmount();
+        }, 0) > 0 && (
+          <div className="flex justify-center">
+            <Button onClick={handleGenerateInvoice}>Generate Invoice</Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

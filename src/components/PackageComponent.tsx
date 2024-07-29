@@ -53,6 +53,7 @@ export class Package {
   }
   setPackQuantity(index: number, quantity: number) {
     this.packs[index].quantity = quantity;
+    this.quantity += quantity;
   }
 }
 
@@ -86,7 +87,7 @@ export const PackageComponent = ({
   };
 
   return (
-    <Card className="p-2 md:p-4 grid grid-cols-2">
+    <Card className="p-2 md:p-4 grid grid-cols-1 md:grid-cols-2">
       <div className="grid grid-cols-1 gap-2 md:gap-4">
         <ComboboxForm
           classname=""
