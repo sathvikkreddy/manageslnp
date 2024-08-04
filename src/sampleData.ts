@@ -805,10 +805,18 @@ export const fetchCompanyDetails = async (id: string) => {
   return {
     id: "uihf387i",
     name: "Company ABC",
-    GSTIN: "27AAACT1234A1Z5",
-    add1: "ijhf387ig298h09dfih",
-    add2: "ijhf387ig298h09dfih",
-    add3: "ijhf387ig298h09dfih",
+    gstin: "27AAACT1234A1Z5",
+    sadd1: "ijhf387ig298h09dfih",
+    sadd2: "ijhf387ig298h09dfih",
+    sadd3: "ijhf387ig298h09dfih",
+    badd1: "ijhf387ig298h09dfih",
+    badd2: "ijhf387ig298h09dfih",
+    badd3: "ijhf387ig298h09dfih",
     top: "60 Days",
   };
+};
+
+export const fetchItemDetails = async (id: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return items.find((item) => item.id === id);
 };

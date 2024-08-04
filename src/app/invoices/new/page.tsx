@@ -17,6 +17,7 @@ const newInvoicePage = () => {
   const [progress, setProgress] = useState<number>(1);
   const [companyId, setCompanyId] = useState<string>("");
   const [gstin, setGSTIN] = useState<string>("");
+  const [top, setTop] = useState<string>("");
   const [companyDetails, setCompanyDetails] = useState<any | null>(null);
   const [ewayBill, setEwayBill] = useState<string>("");
   const [po, setPo] = useState<string>("");
@@ -27,11 +28,18 @@ const newInvoicePage = () => {
   const getCompanyDetails = async (companyId: string) => {
     await new Promise((r) => setTimeout(r, 1000));
     return {
-      id: companyId,
-      name: "Tech Solutions Ltd.",
-      GSTIN: companyId,
-      invoices: 120,
-      payments: 150000,
+      company: {
+        id: "uihf387i",
+        name: "Company ABC",
+        gstin: "27AAACT1234A1Z5",
+        sadd1: "sadd1",
+        sadd2: "sadd2",
+        sadd3: "sadd3",
+        badd1: "badd1",
+        badd2: "badd2",
+        badd3: "badd3",
+        top: "60 Days",
+      },
       items: items,
     };
   };
@@ -57,6 +65,9 @@ const newInvoicePage = () => {
     if (companyId) {
       getCompanyDetails(companyId).then((companyDetails) => {
         setCompanyDetails(companyDetails);
+        console.log(companyDetails);
+        setGSTIN(companyDetails.company.gstin);
+        setTop(companyDetails.company.top);
         setProgress(2);
       });
     }
@@ -87,10 +98,14 @@ const newInvoicePage = () => {
         </div>
 
         <CardHeader className="text-nowrap">
-          {companyDetails && companyDetails.GSTIN}
+          {companyDetails && (
+            <Input value={gstin} onChange={(e) => setGSTIN(e.target.value)} />
+          )}
         </CardHeader>
         <CardHeader className="text-nowrap">
-          {companyDetails && "60 Days"}
+          {companyDetails && (
+            <Input value={top} onChange={(e) => setTop(e.target.value)} />
+          )}
         </CardHeader>
       </div>
       {progress > 1 && (
@@ -103,20 +118,17 @@ const newInvoicePage = () => {
               <CardHeader className="text-nowrap m-0 p-0 text-lg font-semibold">
                 Bill to:
               </CardHeader>
-              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
-              <div>
-                {" "}
-                {companyDetails && "ijihefuwcwfcdfscdecrfdb8gw9q8ih98kbsz"}
-              </div>
-              <div>{companyDetails && "ijihefuwdb8gw9qvsdv8ih98kbsz"}</div>
+              <div>{companyDetails && companyDetails.company.badd1}</div>
+              <div> {companyDetails && companyDetails.company.badd2}</div>
+              <div>{companyDetails && companyDetails.company.badd3}</div>
             </Card>
             <Card className="p-2 md:p-4">
               <CardHeader className="text-nowrap m-0 p-0 text-lg font-semibold">
                 Ship to:
               </CardHeader>
-              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
-              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
-              <div>{companyDetails && "ijihefuwdb8gw9q8ih98kbsz"}</div>
+              <div>{companyDetails && companyDetails.company.sadd1}</div>
+              <div>{companyDetails && companyDetails.company.sadd2}</div>
+              <div>{companyDetails && companyDetails.company.sadd3}</div>
             </Card>
           </div>
           <CardTitle className="m-2 md:m-4">Items:</CardTitle>
@@ -126,6 +138,7 @@ const newInvoicePage = () => {
                 <PackageComponent
                   key={i}
                   pkg={p}
+                  items={companyDetails.items}
                   i={i}
                   packages={packages}
                   setPackages={setPackages}
@@ -183,29 +196,51 @@ const newInvoicePage = () => {
           <Input
             placeholder="PO Number"
             onChange={(e) => {
-              setVehicleNo(e.target.value);
+              setPo(e.target.value);
             }}
           />{" "}
         </div>
         {packages.reduce((acc, pkg) => {
-          return acc + pkg.getAmount();
+          return acc + pkg.getAmount() + (pkg.getAmount() * 18) / 100;
         }, 0) > 50000 && (
           <div className="flex text-nowrap items-center gap-2">
             <div className="text-lg font-semibold">Ewaybill: </div>
             <Input
               placeholder="Way Bill Number"
               onChange={(e) => {
-                setVehicleNo(e.target.value);
+                setEwayBill(e.target.value);
               }}
             />{" "}
           </div>
         )}
         {packages.reduce((acc, pkg) => {
-          return acc + pkg.getAmount();
-        }, 0) > 0 && (
-          <div className="flex justify-center">
-            <Button onClick={handleGenerateInvoice}>Generate Invoice</Button>
-          </div>
+          return acc + pkg.getAmount() + (pkg.getAmount() * 18) / 100;
+        }, 0) > 0 ? (
+          packages.reduce((acc, pkg) => {
+            return acc + pkg.getAmount() + (pkg.getAmount() * 18) / 100;
+          }, 0) > 50000 ? (
+            ewayBill ? (
+              vehicleNo ? (
+                <div className="flex justify-center">
+                  <Button onClick={handleGenerateInvoice}>
+                    Generate Invoice
+                  </Button>
+                </div>
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )
+          ) : vehicleNo ? (
+            <div className="flex justify-center">
+              <Button onClick={handleGenerateInvoice}>Generate Invoice</Button>
+            </div>
+          ) : (
+            ""
+          )
+        ) : (
+          ""
         )}
       </div>
     </div>

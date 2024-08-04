@@ -48,7 +48,7 @@ export function Navbar() {
           Invoices
         </Link>
         <Link
-          href="#"
+          href="/items"
           className="text-sm font-medium hover:underline underline-offset-4"
           prefetch={false}
         >

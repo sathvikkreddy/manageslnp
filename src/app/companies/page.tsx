@@ -3,6 +3,7 @@ import { CompaniesSearch } from "@/components/SearchBars";
 import { Button } from "@/components/ui/button";
 import { companies } from "@/sampleData";
 import React from "react";
+import Link from "next/link";
 
 const companiesPage = async ({
   searchParams,
@@ -24,7 +25,9 @@ const companiesPage = async ({
           <CompaniesSearch />
         </div>
         <div className="flex items-center gap-4">
-          <Button className="text-xs md:text-sm p-1 md:p-2">+ Company</Button>
+          <Link href={"/companies/new"}>
+            <Button className="text-xs md:text-sm p-1 md:p-2">+ Company</Button>
+          </Link>
         </div>
       </header>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">

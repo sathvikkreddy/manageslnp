@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
-import { fetchCompanyDetails } from "@/sampleData";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name must be at least 1 characters."),
@@ -43,23 +42,8 @@ const formSchema = z.object({
   top: z.string(),
 });
 
-const page = ({ params }: { params: { id: string } }) => {
-  const companyId = params.id;
-
-  useEffect(() => {
-    fetchCompanyDetails(companyId).then((c) => {
-      form.setValue("name", c.name);
-      form.setValue("gstin", c.gstin),
-        form.setValue("top", c.top),
-        form.setValue("badd1", c.badd1),
-        form.setValue("badd2", c.badd2),
-        form.setValue("badd3", c.badd3),
-        form.setValue("sadd1", c.sadd1),
-        form.setValue("sadd2", c.sadd2),
-        form.setValue("sadd3", c.sadd3),
-        form.setValue("isSameAddress", false);
-    });
-  }, []);
+const page = () => {
+  const [sameAddress, setSameAddress] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

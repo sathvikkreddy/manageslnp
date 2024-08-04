@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardDescription } from "./ui/card";
 import { ComboboxForm } from "./ComboBoxForm";
 import { items } from "@/sampleData";
@@ -60,11 +60,13 @@ export class Package {
 export const PackageComponent = ({
   pkg,
   packages,
+  items,
   setPackages,
   i,
 }: {
   pkg: Package;
   packages: Package[];
+  items: Item[];
   i: number;
   setPackages: React.Dispatch<React.SetStateAction<Package[]>>;
 }) => {
@@ -73,12 +75,33 @@ export const PackageComponent = ({
     const newOrderItem = items.find((item: Item) => item.id === itemId);
     if (newOrderItem) {
       pkg.setItem(newOrderItem);
+      setDesc1(pkg.item?.desc1 || "");
+      setDesc2(pkg.item?.desc2 || "");
       // Update the packages state to trigger re-render
       const updatedPackages = [...packages];
       updatedPackages[i] = pkg;
       setPackages(updatedPackages);
     }
   };
+
+  const handleItemDesc = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    num: number
+  ) => {
+    if (num === 1 && pkg.item?.desc1) {
+      setDesc1(e.target.value);
+      pkg.item.desc1 = desc1;
+    } else if (num === 2 && pkg.item?.desc2) {
+      setDesc2(e.target.value);
+      pkg.item.desc2 = desc2;
+    }
+    const updatedPackages = [...packages];
+    updatedPackages[i] = pkg;
+    setPackages(updatedPackages);
+  };
+
+  const [desc1, setDesc1] = useState(pkg.item?.desc1 || "");
+  const [desc2, setDesc2] = useState(pkg.item?.desc2 || "");
 
   const handleRemove = () => {
     // Remove the package at index i
@@ -100,8 +123,16 @@ export const PackageComponent = ({
         {pkg.item && (
           <Card className="flex flex-col p-2 md:p-4">
             <div className="text-lg font-semibold">{pkg.item.title}</div>
-            <CardDescription>{pkg.item.desc1}</CardDescription>
-            <CardDescription>{pkg.item.desc2}</CardDescription>
+            <CardDescription>
+              <Input value={desc1} onChange={(e) => handleItemDesc(e, 1)} />
+            </CardDescription>
+            <CardDescription>
+              {" "}
+              <Input
+                value={desc2}
+                onChange={(e) => handleItemDesc(e, 2)}
+              />{" "}
+            </CardDescription>
           </Card>
         )}
         <Card className="flex flex-col p-2 md:p-4">
@@ -135,7 +166,7 @@ export const PackageComponent = ({
                         setPackages(updatedPackages);
                       }}
                     />{" "}
-                    Items x{" "}
+                    {pkg.item?.unit} x{" "}
                     <Input
                       placeholder="2"
                       type="number"
